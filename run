@@ -1,0 +1,4 @@
+#!/bin/sh
+# Copy the files to the web server folder
+rm -rf /srv/http/piantagram.com
+cp -R ./ /srv/http/piantagram.com
