@@ -19,6 +19,12 @@
 			<title>Piantagram Home</title>
 		</head>
 		<body>
+			<?php
+				if ( $_GET[ "return" ] != 0 )
+				{
+					echo "<script>alert( 'Error' )</script>";
+				}
+			?>
 			<!--<div class = "navigation_bar" >
 				<div class = "navbar_searchbox" >
 					<form action = "" >

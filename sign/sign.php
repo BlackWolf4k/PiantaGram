@@ -5,8 +5,10 @@
 	// Check if sign in or signup
 	if ( $_POST["signup"] == "0" ) // Sign in
 	{
+		$username = mysqli_real_escape_string( $users_connection, $_POST[ "username" ] );
+
 		// Get the username
-		$result = mysqli_query( $users_connection, "SELECT * FROM users WHERE username='" . $_POST[ "username" ] . "'" );
+		$result = mysqli_query( $users_connection, "SELECT * FROM users WHERE username='" . $username . "'" );
 
 		// Check that there was a username
 		if ( mysqli_num_rows( $result ) == 1 )
@@ -33,6 +35,7 @@
 		{
 			$email = mysqli_real_escape_string( $users_connection, $_POST[ "email" ] );
 			$username = mysqli_real_escape_string( $users_connection, $_POST[ "username" ] );
+
 			if ( mysqli_query( $users_connection, "INSERT INTO users ( username, email, password, image ) VALUES ('" . $username . "', '" . $email . "', '" . hash( "sha512", $_POST[ "password" ] ) . "', '../home/users_image/default.png' )" ) )
 			{
 				// Create folder for a user
