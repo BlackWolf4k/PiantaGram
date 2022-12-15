@@ -11,17 +11,12 @@
 	{
 		include( "../connection/connect_users.php" );
 		include( "../connection/connect_posts.php" );
-
-		// Check if one internal form submitted some request
-		if ( isset( $_POST[ "following" ] ) ) // Search for a following user
-		{}
-		else if ( isset( $_POST[ "follower" ] ) ) // Search for a follower
-		{}
 ?>
 	<html>
 		<head>
-			<link rel = "stylesheet" href = "./style/style.css" >
+			<link rel = "stylesheet" href = "./style/style.css" />
 			<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+			<link rel = "shortcut icon" href = "favicon.ico" type = "image/x-icon" />
 			<script src = "./script/script.js" ></script>
 			<title>Piantagram Home</title>
 		</head>
@@ -41,20 +36,7 @@
 				<a href = "./profile_settings.php" >Profile Settings</a>
 				<a href = "./make_post.php" >Make Post</a>
 			</div>-->
-			<div class = "friends" >
-				<div class = "followers" >
-					<div class = "navbar_searchbox" >
-						<!--<form action = "./home.php" method = "get >
-							<input type = "text" placeholder = "Search Follower..." name = "get_follower"" >
-							<button type = "submit"><i class = "material-symbols-outlined" >search</i></button>
-						</from>-->
-					</div>
-					<div id = "followers_list" >
-						<?php
-							// Show the followers
-						?>
-					</div>
-				</div>
+			<div class = "friends_column" >
 				<div class = "following" >
 					<div class = "navbar_searchbox" >
 						<!--<form action = "" method = "get" >
@@ -62,80 +44,141 @@
 							<button type = "submit"><i class = "material-symbols-outlined" >search</i></button>
 						</from>-->
 					</div>
-					<?php
-						// Show the following
-					?>
+					<div id = "following_list">
+						<?php
+							get_following();
+							/*if ( isset( $_GET[ "get_following" ] ) )
+							{
+								get_following();
+								unset( $_GET[ "get_following" ]  );
+							}
+							else // Show the following
+							{}*/
+						?>
+					</div>
+				</div>
+				<div class = "followers" >
+					<div class = "navbar_searchbox" >
+						<!--<form action = "./home.php" method = "get >
+							<input type = "text" placeholder = "Search Follower..." name = "get_followers"" >
+							<button type = "submit"><i class = "material-symbols-outlined" >search</i></button>
+						</from>-->
+					</div>
+					<div id = "followers_list" >
+						<?php
+							get_followers();
+							/*if ( isset( $_GET[ "get_followers" ] ) )
+							{
+								get_followers();
+								unset( $_GET[ "get_followers" ]  );
+							}
+							else // Show the followers
+							{}*/
+						?>
+					</div>
 				</div>
 			</div>
 			<div class = "posts_column" >
 				<div class = "navbar_searchbox" >
-					<form action = "./home.php" method = "get" >
+					<form action = "./users.php" method = "post" >
 						<input type = "text" placeholder = "Search User..." name = "get_user" >
 						<button type = "submit"><i class = "material-symbols-outlined" >search</i></button>
 					</from>
 				</div>
 				<div id = "posts" >
 					<?php
-						// If searching for users show the users found
-						if ( isset( $_GET[ "get_user" ] ) ) // Search for a username
-						{
-							get_user();
-							unset( $_GET[ "get_user" ] );
-						}
-						else // Show the posts
-						{}
+						get_posts();
 					?>
 				</div>
 			</div>
-			<div class = "selected_post" >
-				<div class = "user_navbar" >
-					<button class = "material-symbols-outlined" onclick = "add_post()" >add</button>
-					<?php echo "<img class = 'profile_image_small' src = '" . mysqli_fetch_array( mysqli_query( $users_connection, "SELECT image FROM users WHERE ID='" . $_SESSION[ "user_id" ] . "'" ) )["image"] . "'>"; ?>
+			<div class = "informations" >
+				<div class = "selected_post" >
+					<div class = "user_navbar" >
+						<!--<button class = "material-symbols-outlined" onclick = "add_post()" >add</button> -->
+						<?php echo "<img class = 'profile_image_small' src = '" . mysqli_fetch_array( mysqli_query( $users_connection, "SELECT image FROM users WHERE ID='" . $_SESSION[ "user_id" ] . "'" ) )["image"] . "'>"; ?>
+					</div>
+				</div>
+				<div id = "post_form" >
+					<form action = "./post.php" method = "post" enctype="multipart/form-data" >
+						<div>
+							<img id = "dipslayed_post_image" src = "#" alt = "Post Image" />
+						</div>
+						<br>
+						<input accept="image/*" type = "file" name = "image" id = "post_image" ><br>
+						<a>Description</a><br>
+						<input type = "text" placeholder = "Description" name = "description"><br>
+						<a>Tags</a><br>
+						<input type = "text" placeholder = "Tags" name = "tags"><br>
+						<button type = "submit">Post</button>
+					</form>
+				</div>
+				<br>
+				<div class = "idk" >
+					<a>AAAA</a>
 				</div>
 			</div>
-			<div id = "post_form" >
-				<!--<form action = "./post.php" method = "post" enctype="multipart/form-data" >
-					<input type = "file" name = "image">
-					<input type = "text" placeholder = "Description" name = "description">
-					<input type = "text" placeholder = "Tags" name = "tags">
-					<button type = "submit">Post</button>
-				</form>-->
-			</div>
+			<script>
+				add_events();
+			</script>
 		</body>
 	</html>
 <?php
 	}
 //$isMob = is_numeric(strpos(strtolower($_SERVER["HTTP_USER_AGENT"]), "mobile")); 
 function get_followers()
-	{}
-
-	function get_following()
 	{
-		// Get all the ids of the following users
-		$result = mysqli_query( $users_connection, "SELECT following_id FROM users WHERE user_id='" . $_SESSION[ "user_id" ] . "'" );
-		
-		// Check if the user is following someone
-		if ( mysqli_num_rows( $result ) <= 0 ) // Not following anyone
+		include( "../connection/connect_users.php" );
+
+		// Get who is following this user
+		$result = mysqli_query( $users_connection, "SELECT user_id FROM follow WHERE following_id='" . $_SESSION[ "user_id" ] . "'" );
+
+		if ( mysqli_num_rows( $result ) <= 0 )
 		{
-		?>
-			<script>
-				document.getElementById( "followers_list" ).write( "You are not following anyone" );
-			</script>
-		<?php
+			echo "<script>document.write( '<a>You have no followers :(<a>' ); </script>";
 		}
 		else
 		{
-			$result = mysqli_fetch_array( $result );
-
-			$following = mysqli_fetch_array( mysqli_query( $users_connection, "SELECT username FROM users WHERE id IN '" . $result[ "following_id" ] . "'" ) );
-			// foreach ( $result[ "following" ] as $user )
-		?>
-			<script>
-				document.getElementById( "followers_list" ).write( $user . "<br>" );
-			</script>
-		<?php
+			for( $i = 0; $i < mysqli_num_rows( $result ); $i++ )
+			{
+				$user_id = mysqli_fetch_assoc( $result );
+				$username = mysqli_fetch_array( mysqli_query( $users_connection, "SELECT username FROM users WHERE id='" . $user_id . "'" ) )[ "username" ];
+			?>
+				<script>
+					document.write( "<a>" + <?php echo "'" . $username . "'"; ?> + "</a>" );
+				</script>
+			<?php
+			}
 		}
 	}
+
+	function get_following()
+	{
+		include( "../connection/connect_users.php" );
+
+		// Get the users followed by this user
+		$result = mysqli_query( $users_connection, "SELECT following_id FROM follow WHERE user_id='" . $_SESSION[ "user_id" ] . "'" );
+
+		if ( mysqli_num_rows( $result ) <= 0 )
+		{
+			echo "<script>document.write( '<a>You are not following anyone :(<a>' ); </script>";
+		}
+		else
+		{
+			for( $i = 0; $i < mysqli_num_rows( $result ); $i++ )
+			{
+				$user_id = mysqli_fetch_assoc( $result );
+				$username = mysqli_fetch_array( mysqli_query( $users_connection, "SELECT username FROM users WHERE id='" . $user_id . "'" ) )[ "username" ];
+			?>
+				<script>
+					document.write( "<a>" + <?php echo "'" . $username . "'"; ?> + "</a>" );
+				</script>
+			<?php
+			}
+		}
+	}
+
+	function get_posts()
+	{}
 
 	function get_user()
 	{
@@ -146,20 +189,20 @@ function get_followers()
 		$result = mysqli_query( $users_connection, "SELECT id, username FROM users WHERE username LIKE '%" . $username . "%'" );
 		if ( mysqli_num_rows( $result ) <= 0 )
 		{
-			echo "<script>document.getElementById( 'posts' ).innerHTML = '<a>" . $_GET[ "get_user" ] . " leads to no users<a>'; </script>";
+			echo "<script>document.write( '<a>" . $_GET[ "get_user" ] . " leads to no users<a>' ); </script>";
 		}
 		else
 		{
-			// $result = mysqli_fetch_array( $result );
-			// echo $result;
-			echo mysqli_num_rows( $result );
-
 			for( $i = 0; $i < mysqli_num_rows( $result ); $i++ )
 			{
 				$user = mysqli_fetch_assoc( $result );
 			?>
 				<script>
-					document.getElementById( "posts" ).innerHTML += "<a>" + <?php echo "'" . $user[ "username" ] . "'"; ?> + "</a>";
+					document.write( "<div class = 'user_found' id = " + <?php echo "\"" . $user[ "username" ] . "\""; ?> + " > \
+									 " + <?php echo "\"" . "<img class = 'profile_image_small' src = '" . mysqli_fetch_array( mysqli_query( $users_connection, "SELECT image FROM users WHERE ID='" . $user[ "id" ] . "'" ) )["image"] . "'>" . "\""; ?> + "\
+									 <a>" + <?php echo "\"" . $user[ "username" ] . "\""; ?> + "</a> \
+									 </div>");
+					//document.write( "<a>" + <?php //echo "'" . $user[ "username" ] . "'"; ?> + "</a>" );
 				</script>
 			<?php
 			}

@@ -15,11 +15,19 @@
 		{
 			$fetched_result = mysqli_fetch_array( $result );
 
-			// Set a session "token"
-			$_SESSION[ "user_id" ] = $fetched_result[ "id" ];
+			// Check the password
+			if ( $fetched_result[ "password" ] == hash( "sha512", $_POST[ "password" ] ) )
+			{
+				// Set a session "token"
+				$_SESSION[ "user_id" ] = $fetched_result[ "id" ];
 
-			// Go to the home page
-			echo "<script>window.open( './../home/home.php', '_self' );</script>";
+				// Go to the home page
+				echo "<script>window.open( './../home/home.php', '_self' );</script>";
+			}
+			else
+			{
+				echo "Incorrect Password";
+			}
 		}
 		else
 		{

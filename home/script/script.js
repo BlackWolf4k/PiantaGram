@@ -12,3 +12,14 @@ function add_post()
 		post_form.style.display = "none";
 	}
 }
+
+function add_events()
+{
+	document.getElementById( "post_image" ).addEventListener( "change", ( event ) => {
+		const [file] = document.getElementById( "post_image" ).files;
+		if  ( file )
+		{
+			document.getElementById( "dipslayed_post_image" ).src = URL.createObjectURL( file );
+		}
+	} );
+}

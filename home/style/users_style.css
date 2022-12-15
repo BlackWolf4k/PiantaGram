@@ -1,0 +1,70 @@
+*, ::after, ::before
+{
+	box-sizing: border-box;
+}
+
+.users_holder
+{
+	overflow: hidden;
+	display: flex;
+	flex-wrap: wrap;
+	margin-left: 13%;
+	/*margin-right: 10%;*/
+}
+
+/*@media ( max-width: 640 )
+{
+	.users_holder
+	{
+		margin-left: 6%;
+	}
+}
+
+@media ( max-width: 1280px )
+{
+	.users_holder
+	{
+		margin-left: 26%;
+	}
+}*/
+
+
+@media ( min-width: 768px )
+{
+	.user_found
+	{
+		flex: 0, 0, auto;
+		width: 33.33%;
+		padding: 0.5%;
+	}
+}
+
+.user_image
+{
+	border-radius: 10px 10px 0px 0px;
+	max-width: 100%;
+}
+
+.user_body
+{
+	border: 1px solid black;
+	border-radius: 0px 0px 10px 10px;
+	height: 8em;
+}
+
+/*.user_buttons
+{
+	position: absolute;
+	bottom: 4%;
+	left: 3%;
+	display: inline-flex;
+	height: 30px;
+	background-color: white;
+}*/
+
+.user
+{
+	position: relative;
+	display: flex;
+	flex-direction: column;
+}
