@@ -33,21 +33,35 @@
 				for( $i = 0; $i < mysqli_num_rows( $result ); $i++ )
 				{
 					$user = mysqli_fetch_assoc( $result );
-					echo "<div class = 'user_column' >
-							<div class = 'user' >
-								<div class = 'user_found' id = '" . $user[ "username" ] . "' >
-									<img class = 'user_image' src = '" . mysqli_fetch_array( mysqli_query( $users_connection, "SELECT image FROM users WHERE ID='" . $user[ "id" ] . "'" ) )["image"] . "' >
-									<div class = 'user_body' >
-										<a>" . $user[ "username" ] . "</a>
-									</div>
-									<div>
-										<form action = 'follow.php' method = 'post' >
-											<input type = 'submit' name = " . $user[ "id" ] . " value = 'Follow' />
-										</form>
+					if ( $user[ "id" ] != $_SESSION[ "user_id" ] )
+					{
+						echo "<div class = 'user_column' >
+								<div class = 'user' >
+									<div class = 'user_found' id = '" . $user[ "username" ] . "' >
+										<img class = 'user_image' src = '" . mysqli_fetch_array( mysqli_query( $users_connection, "SELECT image FROM users WHERE ID='" . $user[ "id" ] . "'" ) )["image"] . "' >
+										<div class = 'user_body' >
+											<a>" . $user[ "username" ] . "</a>
+										</div>
+										<div>";
+										if ( mysqli_num_rows( mysqli_query( $users_connection, "SELECT * FROM follow WHERE user_id='" . $_SESSION[ "user_id" ] . "' AND following_id='" . $user[ "id" ] . "'" ) ) == 0 )
+										{
+											echo " <form action = 'follow.php' method = 'post' >
+												<input type = 'hidden' value = " . $user[ "id" ] . " name = 'follow_id' >
+												<input type = 'submit' name = 'follow' value = 'Follow' />
+											</form>";
+										}
+										else
+										{
+											echo " <form action = 'follow.php' method = 'post' >
+												<input type = 'hidden' value = " . $user[ "id" ] . " name = 'follow_id' >
+												<input type = 'submit' name = 'unfollow' value = 'UnFollow' />
+											</form>";
+										}
+									echo "</div>
 									</div>
 								</div>
-							</div>
-						</div>";
+							</div>";
+					}
 				}
 			}
 		?>

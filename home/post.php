@@ -46,17 +46,14 @@
 
 		if ( $status == 0 )
 		{
-			$date = date( "Y-d-m H:i:s", $timestamp ); //These are redwood plants. Amazing, ain't them? :D
-
 			$description = mysqli_real_escape_string( $posts_connection, $_POST[ "description" ] );
 			$tags = mysqli_real_escape_string( $posts_connection, $_POST[ "tags" ] );
 
 			// Send the post to the database
-			mysqli_query( $posts_connection, "INSERT INTO posts ( image, description, user, timestamp, likes, tags ) VALUES ( '" .
+			mysqli_query( $posts_connection, "INSERT INTO posts ( image, description, user, likes, tags ) VALUES ( '" .
 										$target . "', '" .
 										$description . "', '" .
 										$_SESSION[ "user_id" ] . "', '" .
-										$date . "', '" .
 										0 . "', '" .
 										$tags . "')" );
 		}

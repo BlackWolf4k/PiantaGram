@@ -23,8 +23,12 @@
 		<body>
 			<?php
 				if ( isset( $_GET[ "return" ] ) )
-					if ( $_GET[ "return" ] != 0 )
+				{
+					if ( $_GET[ "return" ] == 1 )
 						echo "<script>alert( 'Error' )</script>";
+					else if ( $_GET[ "return" ] == 1 )
+						echo "<script>alert( 'Elready following' )</script>";
+				}
 			?>
 			<!--<div class = "navigation_bar" >
 				<div class = "navbar_searchbox" >
@@ -37,7 +41,7 @@
 				<a href = "./make_post.php" >Make Post</a>
 			</div>-->
 			<div class = "friends_column" >
-				<div class = "following" >
+				<div class = "followings" >
 					<div class = "navbar_searchbox" >
 						<!--<form action = "" method = "get" >
 							<input type = "text" placeholder = "Search Follow..." name = "get_following" >
@@ -80,10 +84,10 @@
 			</div>
 			<div class = "posts_column" >
 				<div class = "navbar_searchbox" >
-					<form action = "./users.php" method = "post" >
+					<!--<form action = "./users.php" method = "get" >
 						<input type = "text" placeholder = "Search User..." name = "get_user" >
 						<button type = "submit"><i class = "material-symbols-outlined" >search</i></button>
-					</from>
+					</from>-->
 				</div>
 				<div id = "posts" >
 					<?php
@@ -95,7 +99,7 @@
 				<div class = "selected_post" >
 					<div class = "user_navbar" >
 						<!--<button class = "material-symbols-outlined" onclick = "add_post()" >add</button> -->
-						<?php echo "<img class = 'profile_image_small' src = '" . mysqli_fetch_array( mysqli_query( $users_connection, "SELECT image FROM users WHERE ID='" . $_SESSION[ "user_id" ] . "'" ) )["image"] . "'>"; ?>
+						<?php echo "<img class = 'profile_image_small' src = '" . mysqli_fetch_array( mysqli_query( $users_connection, "SELECT image FROM users WHERE ID='" . $_SESSION[ "user_id" ] . "'" ) )[ "image" ] . "'>"; ?>
 					</div>
 				</div>
 				<div id = "post_form" >
@@ -125,7 +129,7 @@
 <?php
 	}
 //$isMob = is_numeric(strpos(strtolower($_SERVER["HTTP_USER_AGENT"]), "mobile")); 
-function get_followers()
+	function get_followers()
 	{
 		include( "../connection/connect_users.php" );
 
@@ -134,19 +138,21 @@ function get_followers()
 
 		if ( mysqli_num_rows( $result ) <= 0 )
 		{
-			echo "<script>document.write( '<a>You have no followers :(<a>' ); </script>";
+			echo "<a>You have no followers :(</a>";
 		}
 		else
 		{
+			// Read everything that was found
 			for( $i = 0; $i < mysqli_num_rows( $result ); $i++ )
 			{
+				// Get the user informations
 				$user_id = mysqli_fetch_assoc( $result );
-				$username = mysqli_fetch_array( mysqli_query( $users_connection, "SELECT username FROM users WHERE id='" . $user_id . "'" ) )[ "username" ];
-			?>
-				<script>
-					document.write( "<a>" + <?php echo "'" . $username . "'"; ?> + "</a>" );
-				</script>
-			<?php
+				$username = mysqli_fetch_array( mysqli_query( $users_connection, "SELECT * FROM users WHERE id='" . $user_id[ "user_id" ] . "'" ) );
+				
+				// Print the user
+				echo "<div class = 'follower' >
+						<a>" . $username[ "username" ] . "</a>
+					</div>";
 			}
 		}
 	}
@@ -158,27 +164,63 @@ function get_followers()
 		// Get the users followed by this user
 		$result = mysqli_query( $users_connection, "SELECT following_id FROM follow WHERE user_id='" . $_SESSION[ "user_id" ] . "'" );
 
-		if ( mysqli_num_rows( $result ) <= 0 )
+		// Check if user is following anyone
+		if ( mysqli_num_rows( $result ) <= 0 ) // Not following anyone
 		{
-			echo "<script>document.write( '<a>You are not following anyone :(<a>' ); </script>";
+			echo "<a>You are not following anyone :(</a>";
 		}
-		else
+		else // Following someone
 		{
+			// Read everything that was found
 			for( $i = 0; $i < mysqli_num_rows( $result ); $i++ )
 			{
+				// Get the user informations
 				$user_id = mysqli_fetch_assoc( $result );
-				$username = mysqli_fetch_array( mysqli_query( $users_connection, "SELECT username FROM users WHERE id='" . $user_id . "'" ) )[ "username" ];
-			?>
-				<script>
-					document.write( "<a>" + <?php echo "'" . $username . "'"; ?> + "</a>" );
-				</script>
-			<?php
+				$username = mysqli_fetch_array( mysqli_query( $users_connection, "SELECT * FROM users WHERE id='" . $user_id[ "following_id" ] . "'" ) );
+				
+				// Print the user
+				echo "<div class = 'following' >
+						<a>" . $username[ "username" ] . "</a>
+					</div>";
 			}
 		}
 	}
 
 	function get_posts()
-	{}
+	{
+		include( "../connection/connect_users.php" );
+		include( "../connection/connect_posts.php" );
+
+		// Get the users witch to get the posts
+		$result = mysqli_query( $users_connection, "SELECT user_id FROM follow WHERE following_id='" . $_SESSION[ "user_id" ] . "'" );
+
+		if ( mysqli_num_rows( $result ) <= 0 )
+		{
+			echo "<a>You are not following anyone, expand your horizons</a>";
+			return;
+		}
+
+		// Get the posts
+		$posts = mysqli_query( $posts_connection, "SELECT * FROM posts WHERE user IN ( '" . implode( "', '", mysqli_fetch_array( $result ) ) . "' )" );
+
+		if ( mysqli_num_rows( $posts ) <= 0 )
+		{
+			echo "<a>None posted anything yet :O. Try following more people</a>";
+		}
+		else
+		{
+			for ( $i = 0; $i < mysqli_num_rows( $posts ); $i++ )
+			{
+				// Get the post informations
+				$post = mysqli_fetch_assoc( $posts );
+
+				// Print the post
+				echo "<div class = 'post_container' >
+						<img class = 'post_image' src = '" . $post[ "image" ] . "'/>
+					</div>";
+			}
+		}
+	}
 
 	function get_user()
 	{

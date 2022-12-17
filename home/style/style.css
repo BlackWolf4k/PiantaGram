@@ -129,3 +129,8 @@ body
 	max-height: 50px;
 	border-radius: 25px;
 }
+
+.post_container
+{
+	object-fit: contain;
+}
