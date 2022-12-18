@@ -73,7 +73,7 @@
 {
 	float: left;
 	width: 25%;
-	background-color: grey;
+	background-color: rgb(240, 240, 240);
 }
 
 .posts_column
@@ -87,7 +87,7 @@
 {
 	width: 25%;
 	max-width: 25%;
-	background-color: grey;
+	background-color: rgb(240, 240, 240);
 	overflow: hidden;
 }
 
@@ -130,7 +130,16 @@ body
 	border-radius: 25px;
 }
 
+.post_image
+{
+	max-width: fit-content;
+	max-height: 400px;
+}
+
 .post_container
 {
+	margin-left: 10%;
+	margin-right: 10%;
 	object-fit: contain;
+	overflow: hidden;
 }

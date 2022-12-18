@@ -12,6 +12,7 @@
 		include( "../connection/connect_users.php" );
 		include( "../connection/connect_posts.php" );
 ?>
+	<!DOCTYPE html>
 	<html>
 		<head>
 			<link rel = "stylesheet" href = "./style/style.css" />
@@ -84,7 +85,7 @@
 			</div>
 			<div class = "posts_column" >
 				<div class = "navbar_searchbox" >
-					<!--<form action = "./users.php" method = "get" >
+					<!--<form action = "./users.php" method = "post" >
 						<input type = "text" placeholder = "Search User..." name = "get_user" >
 						<button type = "submit"><i class = "material-symbols-outlined" >search</i></button>
 					</from>-->
@@ -192,7 +193,7 @@
 		include( "../connection/connect_posts.php" );
 
 		// Get the users witch to get the posts
-		$result = mysqli_query( $users_connection, "SELECT user_id FROM follow WHERE following_id='" . $_SESSION[ "user_id" ] . "'" );
+		$result = mysqli_query( $users_connection, "SELECT following_id FROM follow WHERE user_id='" . $_SESSION[ "user_id" ] . "'" );
 
 		if ( mysqli_num_rows( $result ) <= 0 )
 		{
@@ -201,8 +202,8 @@
 		}
 
 		// Get the posts
+		echo "('" . implode( "', '", mysqli_fetch_array( $result ) ) . "')";
 		$posts = mysqli_query( $posts_connection, "SELECT * FROM posts WHERE user IN ( '" . implode( "', '", mysqli_fetch_array( $result ) ) . "' )" );
-
 		if ( mysqli_num_rows( $posts ) <= 0 )
 		{
 			echo "<a>None posted anything yet :O. Try following more people</a>";
@@ -217,6 +218,11 @@
 				// Print the post
 				echo "<div class = 'post_container' >
 						<img class = 'post_image' src = '" . $post[ "image" ] . "'/>
+						<div class = 'post_informations' >
+							<a class = 'post_description' >" . $post[ "description" ] . "</a><br>
+							<a class = 'post tags' >" . $post[ "tags" ] . "</a><br>
+							<a class = 'post_timestamp' >" . $post[ "timestamp" ] . "</a>
+						</div>
 					</div>";
 			}
 		}
